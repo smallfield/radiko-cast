@@ -1,0 +1,24 @@
+doctype html
+html
+	head
+		meta charset="utf-8"
+		title Radiko Podcast
+		meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
+		link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css"
+		script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"
+		script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"
+	body
+		div.container
+			div.header
+				h1.page-header Radiko Podcast
+			div.row
+				div.col-lg-7
+					p 購読したい番組を選んで下さい。
+					div.list-group
+						- recordings.each do |name, rec|
+							a.list-group-item href="#{conf["podcast"]["url"]}/#{name}.xml"
+								button.btn.btn-primary. style="float:right;"
+									span.glyphicon.glyphicon-play aria-hidden="true"
+									| 購読する
+								h4.list-group-item-heading #{rec["name"]}
+								p.list-group-item-text #{schedule[name]}
