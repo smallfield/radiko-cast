@@ -22,8 +22,9 @@ class RadikoCast
 	def configureCron
 		crond = File.open(@conf["cron"]["file"], 'w')
 		crond.puts "PATH=#{@conf["cron"]["path"]}"
+		crond.puts "*/15 * * * *   #{@conf["cron"]["user"]} ruby #{File.expand_path(".", __FILE__)}"
 		@conf["recordings"].each do |name, rec|
-			crond.puts "#{getCronString rec} #{@conf["cron_user"]} #{@pwd}/#{@conf["script_name"]} #{rec["channel"]} #{rec["duration"]} #{@enclosure_dir} #{name}" 
+			crond.puts "#{getCronString rec} #{@conf["cron"]["user"]} #{@pwd}/#{@conf["script_name"]} #{rec["channel"]} #{rec["duration"]} #{@enclosure_dir} #{name}" 
 		end
 		crond.close
 	end
