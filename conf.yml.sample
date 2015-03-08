@@ -1,0 +1,22 @@
+script_name: rec_radiko.sh            # 録音に使うスクリプト
+cron:
+        user: root                            # cronの実行ユーザ  
+        file: /etc/cron.d/radiko              # cronの設定ファイル置き場  
+        path: /usr/local/bin:/usr/bin:/bin    # cronでの実行時パス 
+podcast:
+        url: http://www.example.jp/radiko-cast/  # 外から見たpublicディレクトリ
+recordings:
+        kurousa:  # 録音の設定名（ファイル名になるので半角英数推奨)
+                channel: QRR   # 放送曲
+                name: 田村ゆかりのいたずら黒うさぎ  # 表示名
+                day: 日                             # 曜日
+                hour: 0                             # 開始時間
+                min:  0                             # 開始分
+                duration: 30                        # 長さ(分)
+        smile-gang:
+                channel: QRR   # 文化放送
+                name: 水樹奈々スマイルギャング
+                day: 日
+                hour: 23
+                min: 30
+                duration: 30
