@@ -33,7 +33,7 @@ Apacheの例
 ```
 # httpd.conf 
 <VirtualHost *:80>
-    DocumentRoot /home/hoge/www/nicoanime/public
+    DocumentRoot /home/hoge/radiko-cast/public
     ServerName radicast.example.jp
 </VirtualHost>
 ```
