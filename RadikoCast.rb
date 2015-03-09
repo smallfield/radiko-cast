@@ -17,8 +17,15 @@ class RadikoCast
 		@web_root_dir  = "#{@pwd}/public"
 		@enclosure_dir = "#{@web_root_dir}/enclosure"
 		@enclosure_url = "#{@conf["podcast"]["url"]}enclosure/"
+		@ruby_log_file = "#{@pwd}/log/ruby.log"
+		@sh_log_file   = "#{@pwd}/log/shell.log"
 		@logger        = Logger.new(STDOUT)
 		@logger.level  = Logger::INFO
+		# 週の中での放送が早い順にソート
+		@conf["recordings"] = @conf["recordings"].sort{|(_, v1), (_, v2)|
+			format("#%d%02d%02d", DAY_JAPANESE.index(v1["day"]), v1["hour"], v1["min"]) <=>
+			format("#%d%02d%02d", DAY_JAPANESE.index(v2["day"]), v2["hour"], v2["min"])
+		}
 	end
 
 	def configureCron
@@ -26,9 +33,9 @@ class RadikoCast
 		crond = File.open @conf["cron"]["file"], 'w'
 		crond.puts "PATH=#{@conf["cron"]["path"]}"
 		crond.puts "LANG=ja_JP.UTF-8"
-		crond.puts "*/15 * * * *   #{@conf["cron"]["user"]} ruby #{File.expand_path(".", __FILE__)}"
+		crond.puts "*/15 * * * *   #{@conf["cron"]["user"]} ruby #{File.expand_path(".", __FILE__)} 2>&1 >> #{@ruby_log_file}"
 		@conf["recordings"].each do |name, rec|
-			crond.puts "#{getCronString rec} #{@conf["cron"]["user"]} #{@pwd}/#{@conf["script_name"]} #{rec["channel"]} #{rec["duration"]} #{@enclosure_dir} #{name}" 
+			crond.puts "#{getCronString rec} #{@conf["cron"]["user"]} #{@pwd}/#{@conf["script_name"]} #{rec["channel"]} #{rec["duration"]} #{@enclosure_dir} #{name} 2>&1 >> #{@sh_log_file}"
 		end
 		crond.close
 	end
@@ -38,7 +45,7 @@ class RadikoCast
 	end
 
 	def getScheduleString(data)
-		format "毎週%s曜日 %d:%02dから", data["day"], data["hour"], data["min"]
+		format "毎週%s曜日 %d:%02dから(%s)", data["day"], data["hour"], data["min"], data["channel"]
 	end
 
 	def generateFeed
