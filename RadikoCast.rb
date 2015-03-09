@@ -4,23 +4,26 @@ require "pp"
 require "rss"
 require "date"
 require "slim"
+require "logger"
 
 class RadikoCast
 	FILE_TIME_FORMAT = "%Y-%m-%d-%H_%M"
-	RSS_TIME_FORMAT = "%a, %d %b %Y %H:%M:%S %z"
-	
-	DAY_JAPANESE = %w[日 月 火 水 木 金 土]
+	RSS_TIME_FORMAT  = "%a, %d %b %Y %H:%M:%S %z"
+	DAY_JAPANESE     = %w[日 月 火 水 木 金 土]
 
 	def initialize
-		@pwd  = File.expand_path("../", __FILE__)
-		@conf = YAML.load_file(File.expand_path("#{@pwd}/conf.yml", __FILE__))
-		@web_root_dir = "#{@pwd}/public"
+		@pwd           = File.expand_path("../", __FILE__)
+		@conf          = YAML.load_file(File.expand_path("#{@pwd}/conf.yml", __FILE__))
+		@web_root_dir  = "#{@pwd}/public"
 		@enclosure_dir = "#{@web_root_dir}/enclosure"
 		@enclosure_url = "#{@conf["podcast"]["url"]}enclosure/"
+		@logger        = Logger.new(STDOUT)
+		@logger.level  = Logger::INFO
 	end
 
 	def configureCron
-		crond = File.open(@conf["cron"]["file"], 'w')
+		@logger.info "create cron config: #{@conf["cron"]["file"]}"
+		crond = File.open @conf["cron"]["file"], 'w'
 		crond.puts "PATH=#{@conf["cron"]["path"]}"
 		crond.puts "LANG=ja_JP.UTF-8"
 		crond.puts "*/15 * * * *   #{@conf["cron"]["user"]} ruby #{File.expand_path(".", __FILE__)}"
@@ -40,6 +43,7 @@ class RadikoCast
 
 	def generateFeed
 		@conf["recordings"].each do |name, rec|
+			@logger.info "creating RSS for #{rec["name"]}"
 			rss = RSS::Maker.make("2.0") do |maker|
 				maker.channel.description = rec["name"]
 				maker.channel.generator   = "radiko-cast"
@@ -72,6 +76,7 @@ class RadikoCast
 	end
 
 	def generateIndex
+		@logger.info "writing index.html"
 		schedule = {}
 		last_update = {}
 		@conf["recordings"].each do |name, data|
