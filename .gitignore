@@ -37,3 +37,4 @@ build/
 /public/*.xml
 /public/*.html
 /public/enclosure/*.mp3
+/log/*.log*
