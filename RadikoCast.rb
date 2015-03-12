@@ -52,7 +52,7 @@ class RadikoCast
 		@conf["recordings"].each do |name, rec|
 			@logger.info "creating RSS for #{rec["name"]}"
 			rss = RSS::Maker.make("2.0") do |maker|
-				maker.channel.description = rec["name"]
+				maker.channel.description = "#{rec["name"]}\n#{getScheduleString rec}"
 				maker.channel.generator   = "radiko-cast"
 				maker.channel.language    = "ja-jp"
 				maker.channel.link        = @conf["podcast"]["url"]
