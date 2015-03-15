@@ -15,7 +15,9 @@ class RadikoCast
 		@pwd           = File.expand_path("../", __FILE__)
 		@conf          = YAML.load_file(File.expand_path("#{@pwd}/conf.yml", __FILE__))
 		@web_root_dir  = "#{@pwd}/public"
+		Dir.mkdir(@web_root_dir) unless File.exist?(@web_root_dir)
 		@enclosure_dir = "#{@web_root_dir}/enclosure"
+		Dir.mkdir(@enclosure_dir) unless File.exist?(@enclosure_dir)
 		@enclosure_url = "#{@conf["podcast"]["url"]}enclosure/"
 		@ruby_log_file = "#{@pwd}/log/ruby.log"
 		@sh_log_file   = "#{@pwd}/log/shell.log"
