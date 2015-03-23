@@ -24,10 +24,7 @@ class RadikoCast
 		@logger        = Logger.new(STDOUT)
 		@logger.level  = Logger::INFO
 		# 週の中での放送が早い順にソート
-		@conf["recordings"] = @conf["recordings"].sort{|(_, v1), (_, v2)|
-			format("#%d%02d%02d", DAY_JAPANESE.index(v1["day"]), v1["hour"], v1["min"]) <=>
-			format("#%d%02d%02d", DAY_JAPANESE.index(v2["day"]), v2["hour"], v2["min"])
-		}
+		@conf["recordings"] = @conf["recordings"].sort_by{|_, v| "#{DAY_JAPANESE.index(v["day"])}#{v["time"]}" }
 	end
 
 	def configureCron
@@ -37,17 +34,23 @@ class RadikoCast
 		crond.puts "LANG=ja_JP.UTF-8"
 		crond.puts "*/15 * * * *   #{@conf["cron"]["user"]} ruby #{File.expand_path(".", __FILE__)} 2>&1 >> #{@ruby_log_file}"
 		@conf["recordings"].each do |name, rec|
-			crond.puts "#{getCronString rec} #{@conf["cron"]["user"]} #{@pwd}/#{@conf["script_name"]} #{rec["channel"]} #{rec["duration"]} #{@enclosure_dir} #{name} 2>&1 >> #{@sh_log_file}"
+			if (rec["channel"] == "AGQR")
+				crond.puts "#{getCronString rec} #{@conf["cron"]["user"]} ruby #{File.expand_path(".", __FILE__)} agqr #{name} #{rec["duration"]} 2>&1 >> #{@sh_log_file}"
+			else
+				crond.puts "#{getCronString rec} #{@conf["cron"]["user"]} #{@pwd}/#{@conf["script_name"]} #{rec["channel"]} #{rec["duration"]} #{@enclosure_dir} #{name} 2>&1 >> #{@sh_log_file}"
+			end
+
 		end
 		crond.close
 	end
 
 	def getCronString(data)
-		format "%-3d%-3d * * %-3d" ,data["min"], data["hour"], DAY_JAPANESE.index(data["day"])
+		time = Hash[*([[:hour,:min], data["time"].split(":").map{|str| str.to_i}].transpose.flatten)]
+		format "%-3d%-3d * * %-3d" ,time[:min], time[:hour], DAY_JAPANESE.index(data["day"])
 	end
 
 	def getScheduleString(data)
-		format "毎週%s曜日 %d:%02dから(%s)", data["day"], data["hour"], data["min"], data["channel"]
+		format "毎週%s曜日 %sから(%s)", data["day"], data["time"], data["channel"]
 	end
 
 	def generateFeed
@@ -95,19 +98,21 @@ class RadikoCast
 		index.puts Slim::Template.new("#{@pwd}/index.slim").render(self, :recordings => @conf["recordings"], :conf => @conf, :schedule => schedule)
 		index.close
 	end
+
+	def recordAgqr(name, duration)
+                title = "#{name}_#{DateTime.now.strftime(FILE_TIME_FORMAT)}"
+		rtmpdump_cmd = "rtmpdump -r #{@conf["agqr_stream_url"]} --live --stop #{duration.to_i * 60} -o #{@enclosure_dir}/#{title}.flv"
+		@logger.info "runnning: #{rtmpdump_cmd}"
+		system(rtmpdump_cmd)
+		ffmpeg_cmd = "ffmpeg -y -i #{@enclosure_dir}/#{title}.flv -acodec libmp3lame -ab 128k #{@enclosure_dir}/#{title}.mp3"
+		@logger.info "runnning: #{ffmpeg_cmd}"
+		system(ffmpeg_cmd)
+	end
 end
 
 radiko = RadikoCast.new
-
-if ARGV.size == 1
-	case ARGV[1]
-	when "cron"
-		radiko.configureCron
-	when "index"
-		radiko.generateIndex
-	when "feed"
-		radiko.generateFeed
-	end
+if ARGV.size == 3 && ARGV[0] == "agqr"
+	radiko.recordAgqr ARGV[1], ARGV[2]
 else
 	radiko.configureCron
 	radiko.generateIndex

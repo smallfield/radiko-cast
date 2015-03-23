@@ -1,0 +1,100 @@
+script_name: rec_radiko.sh
+agqr_stream_url: rtmp://fms-base1.mitene.ad.jp/agqr/aandg22
+cron:
+        user: root
+        file: /etc/cron.d/radiko
+        path: /usr/local/bin:/usr/bin:/bin
+podcast:
+        url: http://rpod.smallfield.info/  # 外から見たpublicディレクトリ
+recordings:
+        kurousa:
+                channel: QRR   # 文化放送
+                name: 田村ゆかりのいたずら黒うさぎ
+                day: 日
+                time: "00:00"
+                min: 0
+                duration: 30
+        yuikaori:
+                channel: QRR   # 文化放送
+                name: ゆいかおりの実♪
+                day: 月
+                time: "00:30"
+                duration: 30
+        smile-gang:
+                channel: QRR   # 文化放送
+                name: 水樹奈々スマイルギャング
+                day: 日
+                time: "23:30"
+                duration: 30
+        gree-night:
+                channel: QRR   # 文化放送
+                name: 花澤香菜・雨宮天のRADIO GREE NIGHT
+                day: 月
+                time: "01:00"
+                duration: 30
+        miyanomamoru:
+                channel: QRR   # 文化放送
+                name: 宮野真守のRADIO SMILE
+                day: 日
+                time: "01:30"
+                duration: 30
+        deargirl:
+                channel: QRR   # 文化放送
+                name: 神谷浩史・小野大輔のDearGirl～Stories～
+                day: 日
+                time: "01:00"
+                duration: 30
+        nozoeri:
+                channel: QRR   # 文化放送
+                name: ラブライブ！～のぞえりRadio Garden～
+                day: 日
+                time: "00:30"
+                duration: 30
+        bakajikara:
+                channel: TBS   # TBS
+                name: 伊集院光 深夜の馬鹿力
+                day: 火
+                time: "01:00"
+                duration: 120
+        horieyui:
+                channel: QRR   # 文化放送
+                name: 堀江由衣の天使のたまご
+                day: 日
+                time: "22:00"
+                duration: 30
+        m-no-sekai:
+                channel: FMT   # TOYKO FM
+                name: 水樹奈々のMの世界
+                day: 火
+                time: "01:00"
+                duration: 30
+        rippi:
+                channel: AGQR   # A&G
+                name: 人生道でも飯田理穂
+                day: 土
+                time: "19:00"
+                duration: 30
+        sanctuary:
+                channel: FMT   # TOYKO FM
+                name: 茅原実里のSANCTUARY
+                day: 月
+                time: "21:00"
+                duration: 20
+        ojikan:
+                channel: AGQR
+                name: 矢作・佐倉のちょっとお時間よろしいですか
+                day: 水
+                time: "23:00"
+                duration: 30
+        okaeriradio:
+                channel: AGQR
+                name: 豊崎愛生のおかえりらじお
+                day: 木
+                time: "22:30"
+                duration: 60
+        pontsuka:
+                channel: BAYFM78
+                name: PONTSUKA!! 
+                day: 日
+                time: "3:00"
+                duration: 20
