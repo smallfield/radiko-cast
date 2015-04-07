@@ -3,10 +3,14 @@ require "yaml"
 require "pp"
 require "rss"
 require "date"
+require "time"
 require "slim"
 require "logger"
 
 class RadikoCast
+	CRON_MARGIN = 1 # min
+	REC_BEFORE  = 7 # sec
+
 	FILE_TIME_FORMAT = "%Y-%m-%d-%H_%M"
 	RSS_TIME_FORMAT  = "%a, %d %b %Y %H:%M:%S %z"
 	DAY_JAPANESE     = %w[日 月 火 水 木 金 土]
@@ -21,10 +25,10 @@ class RadikoCast
 		@enclosure_url = "#{@conf["podcast"]["url"]}enclosure/"
 		@ruby_log_file = "#{@pwd}/log/ruby.log"
 		@sh_log_file   = "#{@pwd}/log/shell.log"
-		@logger        = Logger.new(STDOUT)
-		@logger.level  = Logger::INFO
+		@logger        = Logger.new(@ruby_log_file)
+		@logger.level  = Logger::DEBUG
 		# 週の中での放送が早い順にソート
-		@conf["recordings"] = @conf["recordings"].sort_by{|_, v| "#{DAY_JAPANESE.index(v["day"])}#{v["time"]}" }
+		@conf["recordings"] = Hash[@conf["recordings"].sort_by{|_, v| "#{DAY_JAPANESE.index(v["day"])}#{v["time"]}"}]
 	end
 
 	def configureCron
@@ -55,7 +59,7 @@ class RadikoCast
 
 	def generateFeed
 		@conf["recordings"].each do |name, rec|
-			@logger.info "creating RSS for #{rec["name"]}"
+			@logger.info "creating RSS for #{rec["name"]}(#{name})"
 			rss = RSS::Maker.make("2.0") do |maker|
 				maker.channel.description = "#{rec["name"]}\n#{getScheduleString rec}"
 				maker.channel.generator   = "radiko-cast"
@@ -100,7 +104,7 @@ class RadikoCast
 	end
 
 	def recordAgqr(name, duration)
-                title = "#{name}_#{DateTime.now.strftime(FILE_TIME_FORMAT)}"
+		title = "#{name}_#{DateTime.now.strftime(FILE_TIME_FORMAT)}"
 		rtmpdump_cmd = "rtmpdump -r #{@conf["agqr_stream_url"]} --live --stop #{duration.to_i * 60} -o #{@enclosure_dir}/#{title}.flv"
 		@logger.info "runnning: #{rtmpdump_cmd}"
 		system(rtmpdump_cmd)
@@ -118,3 +122,4 @@ else
 	radiko.generateIndex
 	radiko.generateFeed
 end
+

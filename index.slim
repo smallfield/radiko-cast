@@ -4,9 +4,17 @@ html
 		meta charset="utf-8"
 		title Radiko Podcast
 		meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
-		link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css"
 		script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"
 		script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"
+		sass:
+			@import "//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css"
+			div.list-group
+				a.list-group-item
+					button.btn
+						float: right
+						margin-left: 10px
+					p.list-group-item-text.right
+						float: right
 	body
 		div.container
 			div.header
@@ -17,7 +25,7 @@ html
 					div.list-group
 						- recordings.each do |name, rec|
 							a.list-group-item href="#{conf["podcast"]["url"]}/#{name}.xml"
-								button.btn.btn-primary. style="float:right;"
+								button.btn.btn-primary
 									span.glyphicon.glyphicon-play aria-hidden="true"
 									| 購読する
 								h4.list-group-item-heading #{rec["name"]}

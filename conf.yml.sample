@@ -1,4 +1,5 @@
 script_name: rec_radiko.sh            # 録音に使うスクリプト
+agqr_stream_url: rtmp://fms-base1.mitene.ad.jp/agqr/aandg22
 cron:
         user: root                            # cronの実行ユーザ  
         file: /etc/cron.d/radiko              # cronの設定ファイル置き場  
@@ -10,13 +11,11 @@ recordings:
                 channel: QRR   # 放送曲
                 name: 田村ゆかりのいたずら黒うさぎ  # 表示名
                 day: 日                             # 曜日
-                hour: 0                             # 開始時間
-                min:  0                             # 開始分
+                time: "0:00"                    # 開始時間
                 duration: 30                        # 長さ(分)
         smile-gang:
-                channel: QRR   # 文化放送
-                name: 水樹奈々スマイルギャング
-                day: 日
-                hour: 23
-                min: 30
+                channel: AGQR   # A&G+
+                name: 人生道でも飯田里穂
+                day: 土
+                time: “19:00”
                 duration: 30
