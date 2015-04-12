@@ -69,7 +69,7 @@ class RadikoCast
         maker.channel.title       = rec["name"]
         maker.items.do_sort       = true
         Dir::entries(@enclosure_dir).each do |file|
-          if /^#{name}_(\d{4}-\d{2}-\d{2}-\d{2}_\d{2})/ =~ file
+          if /^#{name}_(\d{4}-\d{2}-\d{2}-\d{2}_\d{2})\.mp3/ =~ file
             onair = DateTime.strptime("#{$~[1]}+09:00","#{FILE_TIME_FORMAT}%z")
             item = maker.items.new_item
             item.title            = onair.strftime("%Y年%m月%d日 放送分")
