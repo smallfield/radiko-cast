@@ -25,7 +25,7 @@ class RadikoCast
     @enclosure_url = "#{@conf["podcast"]["url"]}enclosure/"
     @ruby_log_file = "#{@pwd}/log/ruby.log"
     @sh_log_file   = "#{@pwd}/log/shell.log"
-    @logger        = Logger.new(@ruby_log_file)
+    @logger        = Logger.new(@ruby_log_file, 7)
     @logger.level  = Logger::DEBUG
     # 週の中での放送が早い順にソート
     @conf["recordings"] = Hash[@conf["recordings"].sort_by{|_, v| "#{DAY_JAPANESE.index(v["day"])}#{v["time"]}"}]
@@ -87,7 +87,6 @@ class RadikoCast
       out = File.new("#{@web_root_dir}/#{name}.xml", "w")
       out.puts rss.to_s
       out.close
-      # puts rss.to_s
     end
   end
 
