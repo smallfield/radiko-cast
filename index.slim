@@ -22,6 +22,7 @@ html
 			div.row
 				div.col-lg-7
 					p 購読したい番組を選んで下さい。
+					h3 放送中
 					div.list-group
 						- recordings.each do |name, rec|
 							a.list-group-item href="#{conf["podcast"]["url"]}/#{name}.xml"
@@ -30,3 +31,12 @@ html
 									| 購読する
 								h4.list-group-item-heading #{rec["name"]}
 								p.list-group-item-text #{schedule[name]}
+					h3 アーカイブ
+					div.list-group
+						- archives.each do |name, rec|
+							a.list-group-item href="#{conf["podcast"]["url"]}/#{name}.xml"
+								button.btn.btn-primary
+									span.glyphicon.glyphicon-play aria-hidden="true"
+									| 購読する
+								h4.list-group-item-heading #{rec["name"]}
+								p.list-group-item-text 　 

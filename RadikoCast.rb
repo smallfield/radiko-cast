@@ -38,6 +38,7 @@ class RadikoCast
     crond.puts "LANG=ja_JP.UTF-8"
     crond.puts "*/15 * * * *   #{@conf["cron"]["user"]} ruby #{File.expand_path(".", __FILE__)} 2>&1 >> #{@ruby_log_file}"
     @conf["recordings"].each do |name, rec|
+      next if rec.has_key? "archive"  # アーカイブ指定されている場合は新規録音を行わない。
       if (rec["channel"] == "AGQR")
         crond.puts "#{getCronString rec} #{@conf["cron"]["user"]} ruby #{File.expand_path(".", __FILE__)} agqr #{name} #{rec["duration"]} 2>&1 >> #{@sh_log_file}"
       else
@@ -93,12 +94,18 @@ class RadikoCast
   def generateIndex
     @logger.info "writing index.html"
     schedule = {}
-    last_update = {}
+    recordings = {}
+    archives = {}
     @conf["recordings"].each do |name, data|
       schedule[name] = getScheduleString(data)
+	    if data.has_key? "archive"
+		archives[name] = data
+	    else
+		recordings[name] = data
+	    end
     end
     index = File.new("#{@web_root_dir}/index.html", "w")
-    index.puts Slim::Template.new("#{@pwd}/index.slim").render(self, :recordings => @conf["recordings"], :conf => @conf, :schedule => schedule)
+    index.puts Slim::Template.new("#{@pwd}/index.slim").render(self, :recordings => @conf["recordings"], :conf => @conf, :schedule => schedule, :archives => archives)
     index.close
   end
 
