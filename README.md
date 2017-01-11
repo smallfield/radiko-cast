@@ -1,4 +1,5 @@
 # radiko-cast
+![radiko-cast](radiko-cast.png)
 Radikoにて指定した番組を録音し、Podcast化して配信するWebアプリ。
 
 # 動作要件
